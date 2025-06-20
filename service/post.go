@@ -2,9 +2,11 @@ package service
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"myapp/model"
 	"myapp/tools"
+	"strings"
 	"time"
 
 	"gorm.io/gorm"
@@ -15,6 +17,13 @@ func (s *Service) PostCreate(ctx context.Context, input model.NewPost) (*model.P
 		Title:     input.Title,
 		Content:   input.Content,
 		CreatedAt: time.Now().UTC(),
+	}
+
+	if strings.TrimSpace(post.Title) == "" {
+		return nil, errors.New("title is required")
+	}
+	if strings.TrimSpace(post.Content) == "" {
+		return nil, errors.New("content is required")
 	}
 
 	if err := s.DB.Model(&post).Omit("updated_at").Create(&post).Error; err != nil {
@@ -28,6 +37,16 @@ func (s *Service) PostUpdate(ctx context.Context, input model.UpdatePost) (*mode
 	var (
 		post model.Post
 	)
+
+	if input.ID == 0 {
+		return nil, errors.New("ID is required")
+	}
+	if strings.TrimSpace(input.Title) == "" {
+		return nil, errors.New("title is required")
+	}
+	if strings.TrimSpace(input.Content) == "" {
+		return nil, errors.New("content is required")
+	}
 
 	if err := s.DB.Model(&post).Scopes(tools.IsDeletedAtNull).Where("id = ?", input.ID).Updates(map[string]interface{}{
 		"title":      input.Title,
@@ -44,6 +63,10 @@ func (s *Service) PostDeleteByID(ctx context.Context, id int) (string, error) {
 	var (
 		post model.Post
 	)
+
+	if id == 0 {
+		return "", errors.New("ID is required")
+	}
 
 	if err := s.DB.Model(&post).Scopes(tools.IsDeletedAtNull).Where("id = ?", id).Omit("updated_at").Update("deleted_at", time.Now().UTC()).Error; err != nil {
 		panic(err)

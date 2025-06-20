@@ -9,6 +9,16 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// PostCreate godoc
+// @Summary      Create a new post
+// @Description  Creates a new post with JSON input which includes the `title` and `content` fields
+// @Tags         posts
+// @Accept       json
+// @Produce      json
+// @Param        post  body      model.NewPost       true  "Post creation payload"
+// @Success      200   {object}  model.PostResponse
+// @Failure      500   {object}  model.PostResponse
+// @Router       /post/create [post]
 func PostCreate(c *gin.Context) {
 	var (
 		input model.NewPost
@@ -49,6 +59,16 @@ func PostCreate(c *gin.Context) {
 	})
 }
 
+// PostUpdate godoc
+// @Summary      Update an existing post
+// @Description  Updates an existing post with JSON input containing `id`, `title`, and `content` fields
+// @Tags         posts
+// @Accept       json
+// @Produce      json
+// @Param        post  body      model.UpdatePost       true  "Post update payload"
+// @Success      200   {object}  model.PostResponse
+// @Failure      500   {object}  model.PostResponse
+// @Router       /post/update [put]
 func PostUpdate(c *gin.Context) {
 	var (
 		input model.UpdatePost
@@ -89,6 +109,15 @@ func PostUpdate(c *gin.Context) {
 	})
 }
 
+// PostDelete godoc
+// @Summary      Delete a post by ID
+// @Description  Deletes a post based on the `id` query parameter
+// @Tags         posts
+// @Produce      json
+// @Param        id   query     int  true  "Post ID to delete"
+// @Success      200   {object}  model.GlobalResponse
+// @Failure      500   {object}  model.GlobalResponse
+// @Router       /post/delete [delete]
 func PostDelete(c *gin.Context) {
 	postIDStr := c.Query("id")
 
@@ -124,6 +153,14 @@ func PostDelete(c *gin.Context) {
 	})
 }
 
+// PostGetAll godoc
+// @Summary      Show all posts
+// @Description  returns a list of all posts
+// @Tags         posts
+// @Produce      json
+// @Success      200  {object}  model.PostMultipleResponse
+// @Failure      500  {object}  model.PostMultipleResponse
+// @Router       /posts [get]
 func PostGetAll(c *gin.Context) {
 	s := service.GetService()
 	defer func() {
@@ -149,6 +186,15 @@ func PostGetAll(c *gin.Context) {
 	})
 }
 
+// PostGetByID godoc
+// @Summary      Show a post
+// @Description  Return a single post by ID
+// @Tags         posts
+// @Produce      json
+// @Param 		 id query int true "Post ID"
+// @Success      200  {object}  model.PostResponse
+// @Failure      500  {object}  model.PostResponse
+// @Router       /post [get]
 func PostGetByID(c *gin.Context) {
 	postIDStr := c.Query("id")
 

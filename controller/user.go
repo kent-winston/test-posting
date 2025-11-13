@@ -56,32 +56,33 @@ func UserLogin(c *gin.Context) {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, &model.TokenResponse{
 			Success: false,
 			Message: err.Error(),
-			Token:   nil,
+			Data:    nil,
 		})
 		return
 	}
 
-	s := service.GetService()
+	s := service.GetTransaction()
 	defer func() {
 		if r := recover(); r != nil {
-			err := s.ErrorCheck(r)
+			err := s.Rollback(r)
 			if err != nil {
 				c.AbortWithStatusJSON(http.StatusInternalServerError, &model.TokenResponse{
 					Success: false,
 					Message: err.Error(),
-					Token:   nil,
+					Data:    nil,
 				})
 				return
 			}
 		}
 	}()
 
-	token, _ := s.UserLogin(c.Request.Context(), input)
+	data, _ := s.UserLogin(c.Request.Context(), input)
+	s.Commit()
 
 	c.JSON(http.StatusOK, &model.TokenResponse{
 		Success: true,
 		Message: "Success",
-		Token:   &token,
+		Data:    data,
 	})
 }
 

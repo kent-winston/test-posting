@@ -13,12 +13,15 @@ type JwtClaim struct {
 	jwt.StandardClaims
 }
 
-func TokenCreate(id int) string {
-	var jwtKey = []byte(os.Getenv("JWT_KEY"))
+// Return: token, expired at
+func TokenCreate(id int) (string, time.Time) {
+	jwtKey := []byte(os.Getenv("JWT_KEY"))
+	expiredAt := time.Now().UTC().Add(24 * time.Hour)
+
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, JwtClaim{
 		ID: id,
 		StandardClaims: jwt.StandardClaims{
-			ExpiresAt: time.Now().Add(24 * time.Hour).Unix(),
+			ExpiresAt: expiredAt.Unix(),
 			IssuedAt:  time.Now().Unix(),
 		},
 	})
@@ -28,7 +31,7 @@ func TokenCreate(id int) string {
 		panic(err)
 	}
 
-	return signedStr
+	return signedStr, expiredAt
 }
 
 func TokenValidate(t string) (*jwt.Token, error) {

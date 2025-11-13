@@ -55,6 +55,23 @@ func AuthMiddleware() gin.HandlerFunc {
 			return
 		}
 
+		valid, err := AccessTokenCheckExistByRawToken(c.Request.Context(), authTokens[1])
+		if err != nil {
+			c.AbortWithStatusJSON(http.StatusInternalServerError, &model.GlobalResponse{
+				Success: false,
+				Message: err.Error(),
+			})
+			return
+		}
+
+		if !valid {
+			c.AbortWithStatusJSON(http.StatusUnauthorized, &model.GlobalResponse{
+				Success: false,
+				Message: "Invalid token",
+			})
+			return
+		}
+
 		ctx := context.WithValue(c.Request.Context(), CtxKey, &User{
 			ID: claims.ID,
 		})

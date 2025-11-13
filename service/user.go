@@ -55,7 +55,7 @@ func (s *Service) UserCreate(ctx context.Context, input model.NewUser, password 
 	return &user, nil
 }
 
-func (s *Service) UserLogin(ctx context.Context, input model.UserLogin) (string, error) {
+func (s *Service) UserLogin(ctx context.Context, input model.UserLogin) (*model.TokenDataResponse, error) {
 	if input.Email == "" || input.Password == "" {
 		panic(fmt.Errorf("invalid email/password"))
 	}
@@ -82,9 +82,40 @@ func (s *Service) UserLogin(ctx context.Context, input model.UserLogin) (string,
 		panic(fmt.Errorf("invalid email/password"))
 	}
 
-	token := tools.TokenCreate(user.ID)
+	return s.UserCreateAccessAndRefreshToken(ctx, user.ID)
+}
 
-	return token, nil
+func (s *Service) UserCreateAccessAndRefreshToken(ctx context.Context, id int) (*model.TokenDataResponse, error) {
+	accessToken, accessExpiredAt := tools.TokenCreate(id)
+
+	refreshToken, err := tools.GenerateSecureTokenHex(32)
+	if err != nil {
+		panic(err)
+	}
+
+	inputRefreshTokenData := model.RefreshTokens{
+		UserID:    id,
+		TokenHash: tools.HashSHA256(refreshToken),
+		CreatedAt: time.Now().UTC(),
+		ExpiredAt: time.Now().UTC().AddDate(0, 0, 7),
+	}
+
+	refreshTokenData, _ := s.RefreshTokensCreate(ctx, inputRefreshTokenData)
+
+	inputAccessTokenData := model.AccessTokens{
+		UserID:         id,
+		RefreshTokenID: refreshTokenData.ID,
+		TokenHash:      tools.HashSHA256(accessToken),
+		CreatedAt:      time.Now().UTC(),
+		ExpiredAt:      accessExpiredAt,
+	}
+
+	s.AccessTokensCreate(ctx, inputAccessTokenData)
+
+	return &model.TokenDataResponse{
+		AccessToken:  accessToken,
+		RefreshToken: refreshToken,
+	}, nil
 }
 
 func (s *Service) UserGetMe(ctx context.Context) (*model.User, error) {

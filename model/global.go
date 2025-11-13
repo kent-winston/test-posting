@@ -6,7 +6,12 @@ type GlobalResponse struct {
 }
 
 type TokenResponse struct {
-	Success bool    `json:"success"`
-	Message string  `json:"message"`
-	Token   *string `json:"token"`
+	Success bool               `json:"success"`
+	Message string             `json:"message"`
+	Data    *TokenDataResponse `json:"data"`
+}
+
+type TokenDataResponse struct {
+	AccessToken  string `json:"access_token"`
+	RefreshToken string `json:"refresh_token"`
 }

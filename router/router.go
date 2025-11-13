@@ -8,6 +8,8 @@ import (
 )
 
 func ApiRouter(r *gin.Engine) {
+	r.POST("/auth/refresh", controller.AuthRefreshToken)
+
 	r.POST("/post/create", controller.PostCreate)
 	r.PUT("/post/update", controller.PostUpdate)
 	r.DELETE("/post/delete", controller.PostDelete)

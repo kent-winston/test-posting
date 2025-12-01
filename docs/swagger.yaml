@@ -1,0 +1,388 @@
+definitions:
+  model.GlobalResponse:
+    properties:
+      message:
+        type: string
+      success:
+        type: boolean
+    type: object
+  model.NewPost:
+    properties:
+      content:
+        type: string
+      title:
+        type: string
+    type: object
+  model.NewUser:
+    properties:
+      email:
+        type: string
+      name:
+        type: string
+      password:
+        type: string
+    type: object
+  model.Post:
+    properties:
+      content:
+        type: string
+      created_at:
+        type: string
+      deleted_at:
+        type: string
+      id:
+        type: integer
+      title:
+        type: string
+      updated_at:
+        type: string
+    type: object
+  model.PostMultipleResponse:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/model.Post'
+        type: array
+      message:
+        type: string
+      success:
+        type: boolean
+    type: object
+  model.PostResponse:
+    properties:
+      data:
+        $ref: '#/definitions/model.Post'
+      message:
+        type: string
+      success:
+        type: boolean
+    type: object
+  model.RefreshTokenInput:
+    properties:
+      refresh_token:
+        type: string
+    type: object
+  model.TokenDataResponse:
+    properties:
+      access_token:
+        type: string
+      refresh_token:
+        type: string
+    type: object
+  model.TokenResponse:
+    properties:
+      data:
+        $ref: '#/definitions/model.TokenDataResponse'
+      message:
+        type: string
+      success:
+        type: boolean
+    type: object
+  model.UpdatePost:
+    properties:
+      content:
+        type: string
+      id:
+        type: integer
+      title:
+        type: string
+    type: object
+  model.UserData:
+    properties:
+      created_at:
+        type: string
+      deleted_at:
+        type: string
+      email:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      updated_at:
+        type: string
+    type: object
+  model.UserLogin:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+    type: object
+  model.UserResponse:
+    properties:
+      data:
+        $ref: '#/definitions/model.UserData'
+      message:
+        type: string
+      success:
+        type: boolean
+    type: object
+info:
+  contact: {}
+paths:
+  /auth/refresh:
+    post:
+      consumes:
+      - application/json
+      description: Get new access token using refresh token
+      parameters:
+      - description: Refresh token data
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/model.RefreshTokenInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.TokenResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.TokenResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.TokenResponse'
+      summary: Get new access token
+      tags:
+      - Token
+  /post:
+    delete:
+      consumes:
+      - application/json
+      description: Delete post
+      parameters:
+      - description: Post id
+        in: query
+        name: id
+        required: true
+        type: integer
+      - description: Bearer JWT token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.GlobalResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.GlobalResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.GlobalResponse'
+      summary: Delete post
+      tags:
+      - Post
+    get:
+      consumes:
+      - application/json
+      description: Get post by id
+      parameters:
+      - description: Post id
+        in: query
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.PostResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.PostResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.PostResponse'
+      summary: Get post by id
+      tags:
+      - Post
+    post:
+      consumes:
+      - application/json
+      description: Create post
+      parameters:
+      - description: Post data
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/model.NewPost'
+      - description: Bearer JWT token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.PostResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.PostResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.PostResponse'
+      summary: Create post
+      tags:
+      - Post
+    put:
+      consumes:
+      - application/json
+      description: Update post
+      parameters:
+      - description: Post data
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/model.UpdatePost'
+      - description: Bearer JWT token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.PostResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.PostResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.PostResponse'
+      summary: Update post
+      tags:
+      - Post
+  /posts:
+    get:
+      consumes:
+      - application/json
+      description: Get all posts from all user
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.PostMultipleResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.PostMultipleResponse'
+      summary: Get all posts
+      tags:
+      - Post
+  /user/login:
+    post:
+      consumes:
+      - application/json
+      description: Login to user account
+      parameters:
+      - description: User login data
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/model.UserLogin'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.TokenResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.TokenResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.TokenResponse'
+      summary: Login user account
+      tags:
+      - User
+  /user/me:
+    get:
+      consumes:
+      - application/json
+      description: Login to user account
+      parameters:
+      - description: Bearer JWT token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.UserResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.UserResponse'
+      summary: Login user account
+      tags:
+      - User
+  /user/register:
+    post:
+      consumes:
+      - application/json
+      description: Register account for user
+      parameters:
+      - description: User registration data
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/model.NewUser'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.GlobalResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.GlobalResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/model.GlobalResponse'
+      summary: Register user account
+      tags:
+      - User
+swagger: "2.0"

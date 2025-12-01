@@ -9,6 +9,18 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// PostCreate godoc
+// @Summary Create post
+// @Description Create post
+// @Tags Post
+// @Accept json
+// @Produce json
+// @Param body body model.NewPost true "Post data"
+// @Param Authorization header string true "Bearer JWT token"
+// @Success 200 {object} model.PostResponse
+// @Failure 400 {object} model.PostResponse
+// @Failure 500 {object} model.PostResponse
+// @Router /post [post]
 func PostCreate(c *gin.Context) {
 	var (
 		input model.NewPost
@@ -16,7 +28,7 @@ func PostCreate(c *gin.Context) {
 
 	err := c.ShouldBind(&input)
 	if err != nil {
-		c.AbortWithStatusJSON(http.StatusInternalServerError, &model.PostResponse{
+		c.AbortWithStatusJSON(http.StatusBadRequest, &model.PostResponse{
 			Success: false,
 			Message: err.Error(),
 			Data:    nil,
@@ -49,6 +61,18 @@ func PostCreate(c *gin.Context) {
 	})
 }
 
+// PostUpdate godoc
+// @Summary Update post
+// @Description Update post
+// @Tags Post
+// @Accept json
+// @Produce json
+// @Param body body model.UpdatePost true "Post data"
+// @Param Authorization header string true "Bearer JWT token"
+// @Success 200 {object} model.PostResponse
+// @Failure 400 {object} model.PostResponse
+// @Failure 500 {object} model.PostResponse
+// @Router /post [put]
 func PostUpdate(c *gin.Context) {
 	var (
 		input model.UpdatePost
@@ -56,7 +80,7 @@ func PostUpdate(c *gin.Context) {
 
 	err := c.ShouldBind(&input)
 	if err != nil {
-		c.AbortWithStatusJSON(http.StatusInternalServerError, &model.PostResponse{
+		c.AbortWithStatusJSON(http.StatusBadRequest, &model.PostResponse{
 			Success: false,
 			Message: err.Error(),
 			Data:    nil,
@@ -89,12 +113,24 @@ func PostUpdate(c *gin.Context) {
 	})
 }
 
+// PostDelete godoc
+// @Summary Delete post
+// @Description Delete post
+// @Tags Post
+// @Accept json
+// @Produce json
+// @Param id query int true "Post id"
+// @Param Authorization header string true "Bearer JWT token"
+// @Success 200 {object} model.GlobalResponse
+// @Failure 400 {object} model.GlobalResponse
+// @Failure 500 {object} model.GlobalResponse
+// @Router /post [delete]
 func PostDelete(c *gin.Context) {
 	postIDStr := c.Query("id")
 
 	postID, err := strconv.Atoi(postIDStr)
 	if err != nil {
-		c.AbortWithStatusJSON(http.StatusInternalServerError, &model.GlobalResponse{
+		c.AbortWithStatusJSON(http.StatusBadRequest, &model.GlobalResponse{
 			Success: false,
 			Message: err.Error(),
 		})
@@ -124,6 +160,15 @@ func PostDelete(c *gin.Context) {
 	})
 }
 
+// PostGetAll godoc
+// @Summary Get all posts
+// @Description Get all posts from all user
+// @Tags Post
+// @Accept json
+// @Produce json
+// @Success 200 {object} model.PostMultipleResponse
+// @Failure 500 {object} model.PostMultipleResponse
+// @Router /posts [get]
 func PostGetAll(c *gin.Context) {
 	s := service.GetService()
 	defer func() {
@@ -149,12 +194,23 @@ func PostGetAll(c *gin.Context) {
 	})
 }
 
+// PostGetByID godoc
+// @Summary Get post by id
+// @Description Get post by id
+// @Tags Post
+// @Accept json
+// @Produce json
+// @Param id query int true "Post id"
+// @Success 200 {object} model.PostResponse
+// @Success 400 {object} model.PostResponse
+// @Failure 500 {object} model.PostResponse
+// @Router /post [get]
 func PostGetByID(c *gin.Context) {
 	postIDStr := c.Query("id")
 
 	postID, err := strconv.Atoi(postIDStr)
 	if err != nil {
-		c.AbortWithStatusJSON(http.StatusInternalServerError, &model.PostResponse{
+		c.AbortWithStatusJSON(http.StatusBadRequest, &model.PostResponse{
 			Success: false,
 			Message: err.Error(),
 			Data:    nil,

@@ -8,6 +8,17 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// AuthRefreshToken godoc
+// @Summary Get new access token
+// @Description Get new access token using refresh token
+// @Tags Token
+// @Accept json
+// @Produce json
+// @Param body body model.RefreshTokenInput true "Refresh token data"
+// @Success 200 {object} model.TokenResponse
+// @Failure 400 {object} model.TokenResponse
+// @Failure 500 {object} model.TokenResponse
+// @Router /auth/refresh [post]
 func AuthRefreshToken(c *gin.Context) {
 	var (
 		input model.RefreshTokenInput
@@ -15,7 +26,7 @@ func AuthRefreshToken(c *gin.Context) {
 
 	err := c.ShouldBind(&input)
 	if err != nil {
-		c.AbortWithStatusJSON(http.StatusInternalServerError, &model.TokenResponse{
+		c.AbortWithStatusJSON(http.StatusBadRequest, &model.TokenResponse{
 			Success: false,
 			Message: err.Error(),
 			Data:    nil,

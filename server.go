@@ -3,6 +3,7 @@ package main
 import (
 	"log"
 	"myapp/config"
+	"myapp/docs"
 	"myapp/middleware"
 	"myapp/router"
 	"os"
@@ -22,6 +23,12 @@ func main() {
 	db := config.GetDB()
 	sqlDB, _ := db.DB()
 	defer sqlDB.Close()
+
+	docs.SwaggerInfo.Title = "Posting API"
+	docs.SwaggerInfo.Description = "API docs for posting"
+	docs.SwaggerInfo.Version = "1.0"
+	docs.SwaggerInfo.Host = "localhost:8080"
+	docs.SwaggerInfo.Schemes = []string{"http", "https"}
 
 	r := gin.New()
 	r.Use(

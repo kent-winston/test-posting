@@ -3,6 +3,7 @@ package controller
 import (
 	"myapp/model"
 	"myapp/service"
+	"myapp/tools"
 	"net/http"
 	"strconv"
 
@@ -41,9 +42,10 @@ func PostCreate(c *gin.Context) {
 		if r := recover(); r != nil {
 			err := s.Rollback(r)
 			if err != nil {
-				c.AbortWithStatusJSON(http.StatusInternalServerError, &model.PostResponse{
+				code, message := tools.APIErrorResponse(err)
+				c.AbortWithStatusJSON(code, &model.PostResponse{
 					Success: false,
-					Message: err.Error(),
+					Message: message,
 					Data:    nil,
 				})
 				return

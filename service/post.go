@@ -17,6 +17,11 @@ func (s *Service) PostCreate(ctx context.Context, input model.NewPost) (*model.P
 		CreatedAt: time.Now().UTC(),
 	}
 
+	if input.Title == "" || input.Content == "" {
+		err := tools.NewCustomError(400, "Invalid title/content input")
+		panic(err)
+	}
+
 	if err := s.DB.Model(&post).Omit("updated_at").Create(&post).Error; err != nil {
 		panic(err)
 	}
